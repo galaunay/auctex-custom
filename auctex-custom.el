@@ -29,6 +29,9 @@
 (require 'projectile)
 (require 'tex)
 
+(defvar TeX-compilation-on-idle-timer nil
+  "Timer for compilation on idle.")
+
 (defun TeX-save-buffer-or-project ()
   "Save the current file or project."
   (interactive)
@@ -184,6 +187,41 @@ quit error overview windows if present."
       (xref-push-marker-stack (point-marker))
       (goto-char fig-pos)
       (re-search-forward "\\\\caption" nil t 1))))
+
+(defun TeX-update-pdf-quietly ()
+  "Recompile the current associated pdf quielty.
+
+Use LatexMk by default."
+  (let ((output-name (expand-file-name
+                      (TeX-active-master (TeX-output-extension))))
+        (TeX-debug-bad-boxes nil)
+        (TeX-debug-warnings nil))
+    (when (and (find-buffer-visiting output-name)
+               (derived-mode-p 'latex-mode))
+      (TeX-command "LatexMk" 'TeX-active-master))))
+
+(defun TeX-toggle-compilation-on-save ()
+  "Toggle automatic re-compilation on save."
+  (interactive)
+  (if (member 'TeX-update-pdf-quietly after-save-hook)
+      (progn
+        (remove-hook 'after-save-hook 'TeX-update-pdf-quietly)
+        (message "Deactivated autocompilation on save."))
+    (add-hook 'after-save-hook 'TeX-update-pdf-quietly)
+    (message "Activated autocompilation on save.")
+    (let ((TeX-debug-bad-boxes nil)
+          (TeX-debug-warnings nil))
+           (TeX-command-and-show "LatexMk" 'TeX-master-file))))
+
+;; useless...
+(defun TeX-toggle-compilation-on-idle ()
+  "Toggle automatic recompilation on idle."
+  (interactive)
+  (if TeX-compilation-on-idle-timer
+      (cancel-timer TeX-compilation-on-idle-timer)
+    (setq TeX-compilation-on-idle-timer
+          (run-with-idle-timer 2 t 'TeX-update-pdf-quietly))))
+
 
 (provide 'auctex-custom)
 ;;; auctex-custom.el ends here
