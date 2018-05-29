@@ -198,7 +198,7 @@ Use LatexMk by default."
         (TeX-debug-warnings nil))
     (when (and (find-buffer-visiting output-name)
                (derived-mode-p 'latex-mode))
-      (TeX-command "LatexMk" 'TeX-active-master))))
+      (TeX-command-and-show "LatexMk" 'TeX-active-master))))
 
 (defun TeX-toggle-compilation-on-save ()
   "Toggle automatic re-compilation on save."
