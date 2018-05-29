@@ -211,7 +211,7 @@ Use LatexMk by default."
     (message "Activated autocompilation on save.")
     (let ((TeX-debug-bad-boxes nil)
           (TeX-debug-warnings nil))
-           (TeX-command-and-show "LatexMk" 'TeX-master-file))))
+           (TeX-command "LatexMk" 'TeX-master-file))))
 
 ;; useless...
 (defun TeX-toggle-compilation-on-idle ()
