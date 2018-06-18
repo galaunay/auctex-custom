@@ -188,6 +188,21 @@ quit error overview windows if present."
       (goto-char fig-pos)
       (re-search-forward "\\\\caption" nil t 1))))
 
+(defun TeX-find-equation-by-number (eq-number)
+  "Goto the latex equation associated with the number EQ-NUMBER."
+  (interactive "nEquation number: ")
+  (let ((eq-pos nil))
+    (save-excursion
+      (goto-char (point-min))
+      (if (re-search-forward "^[ ]*\\\\begin{equation\\*?}" (point-max) t eq-number)
+          (setq eq-pos (point))
+        (message "No equation associated to this number (%s)" eq-number)))
+    (when eq-pos
+      (evil--jumps-push)
+      (xref-push-marker-stack (point-marker))
+      (goto-char eq-pos)
+      (forward-line))))
+
 (defun TeX-update-pdf-quietly ()
   "Recompile the current associated pdf quielty.
 
