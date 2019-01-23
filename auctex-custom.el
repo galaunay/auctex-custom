@@ -156,7 +156,6 @@ Save project buffers,and run the wanted command.
 Launch NAME command on FILE
 quit error overview windows if present."
   (interactive)
-  (when (not (use-region-p)) (TeX-select-beamer-frame))
   (let ((TeX-command-region-begin (if (use-region-p) (region-beginning) (point-min)))
         (TeX-command-region-end (if (use-region-p) (region-end) (point-max))))
     (TeX-error-overview-quit-help)
@@ -168,10 +167,25 @@ quit error overview windows if present."
 (defun TeX-select-beamer-frame ()
   "Select the current beamer frame."
   (interactive)
-  (while (not (looking-at-p "\\\\begin *{frame}"))
-    (LaTeX-find-matching-begin))
-  (forward-char)
-  (LaTeX-mark-environment))
+  (when (re-search-backward "\\\\begin *{frame}" (point-min) t)
+      (forward-char)
+      (LaTeX-mark-environment)
+      t))
+
+(defun TeX-select-section ()
+  "Select the current section."
+  (interactive)
+  (when (re-search-backward "\\\\section{" (point-min) t)
+      (forward-char)
+      (LaTeX-mark-section)
+      t))
+
+(defun TeX-select-region-dwim ()
+  "Select the surrounding latex environement if no region active"
+  (interactive)
+  (or (use-region-p)
+      (TeX-select-beamer-frame)
+      (TeX-select-section)))
 
 (defun TeX-find-figure-by-number (fig-number)
   "Goto the latex figure associated with the number FIG-NUMBER."
@@ -211,7 +225,7 @@ Use LatexMk by default."
                       (TeX-active-master (TeX-output-extension))))
         (TeX-debug-bad-boxes nil)
         (TeX-debug-warnings nil))
-    (when (and (find-buffer-visiting output-name)
+    (when (and (get-buffer-window (find-buffer-visiting output-name))
                (derived-mode-p 'latex-mode))
       (TeX-command-and-show "LatexMk" 'TeX-active-master))))
 
