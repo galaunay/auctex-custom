@@ -193,7 +193,7 @@ quit error overview windows if present."
   (let ((fig-pos nil))
     (save-excursion
       (goto-char (point-min))
-      (if (re-search-forward "^[ ]*\\\\includegraphics" (point-max) t fig-number)
+      (if (re-search-forward "^[[:space:]]*\\\\includegraphics" (point-max) t fig-number)
           (setq fig-pos (point))
         (message "No figure associated to this number (%s)" fig-number)))
     (when fig-pos
@@ -208,7 +208,7 @@ quit error overview windows if present."
   (let ((eq-pos nil))
     (save-excursion
       (goto-char (point-min))
-      (if (re-search-forward "^[ ]*\\\\begin{equation\\*?}" (point-max) t eq-number)
+      (if (re-search-forward "^[[:space:]]*\\\\begin{equation\\*?}" (point-max) t eq-number)
           (setq eq-pos (point))
         (message "No equation associated to this number (%s)" eq-number)))
     (when eq-pos
