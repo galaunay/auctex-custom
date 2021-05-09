@@ -6,6 +6,7 @@
 ;; URL: https://github.com/galaunay/auctex-custom
 ;; Keywords: LaTeX
 ;; Package-Requires: ((auctex "11.90.2.2017-07-25"))
+;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
